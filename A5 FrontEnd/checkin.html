@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> Check-in </title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+				<script>
+
+
+/*confirms check-in and checks for aligability*/
+function con() {
+    required();
+}
+
+/*stores the information locally from the form to be verified*/
+function store() {
+    var myForm1 = document.form1;
+		var carType = document.getElementById("cartype");
+    var userFirst = myForm1.firstname.value;
+    var userLast = myForm1.lastname.value;
+    // var userMake = myForm1.make.value;
+    // var userModel = myForm1.model.value;
+    var userDuration = myForm1.duration.value;
+		var userCar = carType.options[carType.selectedIndex].text;
+		var date = new Date();
+		var time = date.getHours();
+
+    if(userFirst != "") {
+        localStorage.setItem("firstname", userFirst);
+    }
+    if(userLast != "") {
+        localStorage.setItem("lastname", userLast);
+    }
+    // localStorage.setItem("make", userMake);
+    // localStorage.setItem("model", userModel);
+    localStorage.setItem("duration", userDuration);
+		localStorage.setItem("cartype", userCar);
+		localStorage.setItem("checktime", time);
+}
+
+
+/*Makes sure all reqired information is filled out*/
+function required() {
+    var myForm = document.form1;
+		var carType = document.getElementById("cartype");
+    // var make = myForm.make.value;
+    // var model = myForm.model.value;
+    var duration = myForm.duration.value;
+		var userCar = carType.options[carType.selectedIndex].text;
+
+    // if(make == "" || model == "") {
+    //     txt = "* reqired fields"
+    //     if(make == "") {
+    //         myForm.make.focus();
+    //     } else {
+    //         myForm.model.focus();
+    //     }
+		// 	}
+
+		if(duration == "" || isNaN(duration) == true) {
+        showAlert("* required fields" + "<br />" + "Must be a number");
+        myForm.duration.focus();
+    } else if(isNaN(duration) == false && duration < 30) {
+        showAlert("Minimum time of 30 minutes.");
+        myForm.duration.focus();
+    } else if(userCar == "Choose car type") {
+			showAlert("* required fields" + "<br />" + "Please select car type.");
+		} else {
+        /*Final check for eligibility before being verified*/
+        confirmation();
+    }
+}
+
+/*Gets confirmation from the user to continue*/
+function confirmation() {
+    if (eligible() == true) {
+        if(confirm("You are eligible for parking.") == true) {
+            showAlert("Great");
+						store();
+            /*Send final info to backend, commented out for now*/
+            //sendToBackend();
+            /*Local verify page location goes here*/
+            window.location.href = "verify.html";
+        } else {
+            showAlert("Check-In Canceled");
+						document.getElementById("formId").reset();
+        }
+    } else {
+        showAlert("You are not eligible for parking at this time." + "<br />" + "Please try again later.");
+    }
+}
+
+/*This function will check to see if the car is eligible for the service
+Will need backend communication*/
+function eligible() {
+    /*Test var, 0 is true and 1 is false*/
+    var num = 0;
+
+
+    /*Feel free to change this if statment to connect backend*/
+    if(num == 0) {
+        return true
+    } else {
+        return false
+    }
+}
+
+/*Used to dosplay alert massages*/
+function showAlert(a) {
+    var alertTextSA = a;
+    document.getElementById("alertText").innerHTML = alertTextSA;
+}
+
+function isLoginH() {
+    var loginPS = localStorage.getItem("login");
+
+    if(loginPS == "true") {
+        window.location.href = "userhome.html";
+    } else {
+        window.location.href = "home.html";
+    }
+}
+
+function isLogin() {
+    var loginPS = localStorage.getItem("login");
+
+    if(loginPS == "true") {
+        window.location.href = "uparkingstatus.html";
+    } else {
+        window.location.href = "parkingstatus.html";
+    }
+}
+
+function isLoginCO() {
+    var loginPS = localStorage.getItem("login");
+
+    if(loginPS == "true") {
+        window.location.href = "ucheckout.html";
+    } else {
+        window.location.href = "checkout.html";
+    }
+}
+
+</script>
+</head>
+
+
+
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 30%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #db3b43;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+
+button:hover {
+  opacity:1;
+}
+
+
+
+/* Float cancel and signup buttons and add an equal width */
+.continuebtn {
+  text-align:center;
+  width: 30%;
+}
+
+
+/* Add padding to container elements */
+.container {
+  padding: 16px;
+}
+
+/* Clear floats */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Change styles for cancel button and signup button on extra small screens */
+@media screen and (max-width: 300px) {
+  .cancelbtn, .signupbtn {
+     width: 100%;
+  }
+}
+
+#cartype{
+ width:400px;
+}
+</style>
+
+
+<body>
+<center> <h2> SmartAPS </h2>
+
+<link rel="stylesheet" href="stylesheet.css">
+
+<div class="menubar">
+ <a href="#" onclick="isLoginH()">Home</a>
+ <a class="active">Check-in</a>
+ <a href="#" onclick="isLogin()">Parking Status</a>
+ <a href="reservation.html">Make a Reservation</a>
+ <a href="#" onclick="isLoginCO()">Check-Out</a>
+</div>
+
+
+<form id="formId" NAME=form1 action="/action_page.php" style="border:1px solid #ccc">
+  <div class="container">
+    <h1>Check-In</h1>
+    <p id="alertText">Please fill in this form to check-in.</p>
+    <p id="demo1"></p>
+    <hr>
+
+    <label for="firstname"><b>First Name</b></label><br>
+    <input type="text" placeholder="Enter First Name" name="firstname" ><br>
+
+    <label for="lastname"><b>Last Name</b></label><br>
+    <input type="text" placeholder="Enter Last Name" name="lastname" ><br>
+
+		<!-- <label for="carinfo"><b>Car Type</b></label><br>
+    <input type="text" placeholder="ex. SUV, " name="lastname" ><br> -->
+
+    <!-- <label for="carinfo"><b>Car Make *</b></label><br>
+    <input type="text" placeholder="ex. Make" name="make"><br>
+
+    <label for="carinfo"><b>Car Model *</b></label><br>
+    <input type="text" placeholder="ex. Model" name="model"><br> -->
+
+		<label for="carinfo"><b>Estimated Parking Duration *</b></label><br>
+    <input type="text" placeholder="ex. For 60 minutes, enter 60" name="duration"><br>
+
+		<label for="carinfo"><b>Car Type *</b></label><br>
+		<select name="cartype" id="cartype" onChange="">
+			<option value="0" id="picker">Choose car type</option>
+			<option value="1" id="convertible">Convertible</option>
+			<option value="2" id="coupe">Coupe</option>
+			<option value="3" id="crossover">Crossover</option>
+			<option value="4" id="hatchback">Hatchback</option>
+			<option value="5" id="minivan">Minivan</option>
+			<option value="6" id="pickup">Pick-Up</option>
+			<option value="7" id="sedan">Sedan</option>
+			<option value="8" id="stationwagon">Station Wagon</option>
+			<option value="9" id="suv">SUV</option>
+			<option value="10" id="van">Van</option>
+		</select>
+
+    <p><br>By continuing you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+
+    <div class="clearfix">
+    	<button type="button" class="continuebtn" onclick="con()"; return false;>Continue</button>
+    </div>
+  </div>
+</form>
+
+</body>
+</html>

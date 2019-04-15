@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> Parking Status </title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+				<script>
+
+
+// Get the modal
+var modal = document.getElementById('id01');
+
+
+
+/*Checks to see if the parking code is in the system*/
+function checkCode() {
+    var tempFormCC = document.codeForm;
+    var parkCode = tempFormCC.parkcode.value;
+    var test = 0;
+
+    if(parkCode == "") {
+        tempFormCC.parkcode.focus();
+        showAlert("* required fields");
+    } else {
+			//if parking code is in database
+       if(test == 0) {
+				 localStorage.setItem("parkcode", parkCode);
+          window.location.href = "parkingstatus2.html";
+        } else {
+          showAlert("Invalid Parking Code")
+        }
+    }
+}
+
+function required() {
+    var tempFormR = document.logInForm;
+    var userR = tempFormR.username.value;
+    var passR = tempFormR.password.value;
+
+    if(userR == "") {
+        tempFormR.username.focus();
+        logAlert("* required fields");
+    } else if(passR == "") {
+        tempFormR.password.focus();
+        logAlert("* required fields");
+    } else {
+        logAlert("Enter username and password to Log-in.");
+        localStorage.setItem("username", userR);
+        localStorage.setItem("password", passR);
+        confirmLog();
+    }
+
+    /*This doent do anything right now just here
+    to connect to backend in the future*/
+    //sendToBackend();
+}
+
+/*Gets confirmation from the user to continue*/
+function confirmLog() {
+
+    if(isUser() == true) {
+      /*Setting login statis to true*/
+      localStorage.setItem("login", "true");
+      logAlert("Log-In Verified");
+      /*Send final info to backend, commented out for now*/
+      //sendToBackend();
+      /*Local verify page location goees here*/
+      window.location.href = "uparkingstatus.html";
+    } else {
+        logAlert("Username and password invalid.")
+    }
+
+}
+
+function cancel() {
+	localStorage.removeItem("username");
+	localStorage.removeItem("password");
+	localStorage.removeItem("login");
+	document.getElementById('id01').style.display='none'
+}
+
+/*This function will be used to check if the username
+and password provided are in the database*/
+function isUser() {
+    /*If the username is in the database, check that password
+    if they are both valid return true*/
+    var test = 0;
+    if(test == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function isLogin() {
+    var loginPS = localStorage.getItem("login");
+
+    if(loginPS == "true") {
+        window.location.href = "uparkingstatus.html";
+    } else {
+        window.location.href = "parkingstatus.html";
+    }
+}
+
+function isLoginH() {
+    var loginPS = localStorage.getItem("login");
+
+    if(loginPS == "true") {
+        window.location.href = "userhome.html";
+    } else {
+        window.location.href = "home.html";
+    }
+}
+
+/*A method where verified information can be sent to backend*/
+function sendToBackend() {
+   /*This is the final verified information (some may be blank) to be put
+    in what ever format is need to be sent to backend*/
+    var randCodeSTB = localStorage.getItem("randcode");
+    var phoneNumSTB = localStorage.getItem("phonenum")
+
+}
+
+/*Used to dosplay alert massages*/
+function showAlert(a) {
+    var alertTextSA = a;
+    document.getElementById("alertText").innerHTML = alertTextSA;
+}
+
+function logAlert(a) {
+    var logTextLA = a;
+    document.getElementById("logText").innerHTML = logTextLA;
+}
+
+function isLoginCO() {
+    var loginPS = localStorage.getItem("login");
+
+    if(loginPS == "true") {
+        window.location.href = "ucheckout.html";
+    } else {
+        window.location.href = "checkout.html";
+    }
+}
+
+
+
+
+
+</script>
+</head>
+
+
+
+<style>
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #db3b43;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 20%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+.container {
+  padding: 16px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)}
+  to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+  from {transform: scale(0)}
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+ </style>
+
+
+
+
+<body>
+<center> <h2> SmartAPS </h2>
+
+<link rel="stylesheet" href="stylesheet.css">
+
+<div class="menubar">
+ <a href="#" onclick="isLoginH()">Home</a>
+ <a href="checkin.html">Check-in</a>
+ <a class="active">Parking Status</a>
+ <a href="reservation.html">Make a Reservation</a>
+ <a href="#" onclick="isLoginCO()">Check-Out</a>
+</div>
+
+<form NAME=codeForm action="/action_page.php" style="border:1px solid #ccc">
+    <div class="container">
+        <h1>Parking Status</h1>
+        <p id="alertText">Input parking code to check status.</p>
+        <p id="verifyText"></p>
+        <hr>
+
+        <p id="code"></p>
+
+        <label for="parkcode"><b>Parking Code *</b></label><br>
+        <input type="text" placeholder="" name="parkcode" style="width: 25%"><br>
+
+        <p>Click below to check parking status with a code.<br />Or to login.</p>
+
+        <div class="clearfix">
+
+            <button type="button" class="continuebtn" style="width: 15%" onclick="checkCode()">Check Parking Status</button>
+            <button type="button" class="continuebtn" style="width: 15%" onclick="document.getElementById('id01').style.display='block'">Log-In</button>
+        </div>
+
+
+
+    </div>
+</form>
+
+<!--<button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>-->
+
+<div id="id01" class="modal">
+
+    <form NAME=logInForm class="modal-content animate" action="/action_page.php">
+        <div class="imgcontainer">
+            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+        </div>
+
+        <div class="container">
+            <h2>Log-In</h2>
+            <p id="logText"></p>
+
+            <label for="username"><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="username"><br>
+
+            <label for="password"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="password"><br>
+
+            <button type="button" onclick="required()">Login</button>
+            <button type="button" onclick="cancel()">Cancel</button>
+            <label>
+                <input type="checkbox" checked="checked" name="remember"> Remember me
+            </label>
+	       <span class="psw">Forgot <a href="#">password?</a></span>
+        </div>
+
+
+    </form>
+</div>
+
+
+
+
+
+
+
+
+</body>
+</html>

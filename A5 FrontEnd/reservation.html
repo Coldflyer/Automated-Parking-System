@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> Making a Reservation </title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+				<script>
+
+ var globalVars = {};
+
+
+/*A method that gets dates for reservation within the nest two weeks*/
+function showDates() {
+		var duration = document.getElementById("duration");
+		duration.style.display = "none";
+		var times = document.getElementById("myTimes");
+		times.style.display = "none";
+		globalVars.date = new Date();
+
+		var startDate = new Date();
+		var startDay = startDate.getDate();
+		var startMonth = startDate.getMonth() + 1;
+		var day = startDay;
+		var month = startMonth;
+		var year = startDate.getFullYear();
+		var displayDate = document.getElementById("date1");
+
+		displayDate.innerHTML = startDate.toDateString();
+		for(var a = 2; a <= 14; a++) {
+			displayDate = document.getElementById(("date" + a).toString());
+			day ++;
+
+			if(day > 31) {
+				day = 1;
+				month ++;
+			}
+			if(month > 12) {
+				month = 1;
+				day = 1;
+			}
+
+			startDate.setFullYear(year, month-1, day);
+			displayDate.innerHTML = startDate.toDateString();
+		}
+}
+
+function showTimes() {
+	var times = document.getElementById("myTimes");
+	var list = document.getElementById("myDates");
+	var userDate = list.options[list.selectedIndex].text;
+	var date = globalVars.date;
+	var currentHour = date.getHours();
+	var pickTime;
+	var userTime = times.options[times.selectedIndex].text;
+
+	if(userDate != "Pick A Date") {
+		times.style.display = "block";
+
+		if(userDate == date.toDateString()) {
+			for(var a = 1; a < 13; a++) {
+				pickTime = document.getElementById("myTimes").options[a].text;
+				var tempTime = pickTime;
+				if(pickTime.indexOf(":") == 2) {
+					pickTime = pickTime.substr(0, 2);
+				} else {
+					pickTime = pickTime.substr(0, 1);
+				}
+				if(tempTime.substr(tempTime.indexOf(" ")+1, tempTime.length) == "PM" && tempTime.substr(0, 2) != "12") {
+					pickTime = Number(pickTime) + 12;
+				}
+				if(pickTime < currentHour) {
+					document.getElementById("myTimes").options[a].disabled = true;
+				}
+			}
+		}
+
+	} else {
+		times.style.display = "none";
+	}
+}
+
+function showDuration() {
+	var duration = document.getElementById("duration");
+	duration.style.display = "block";
+
+}
+
+function saveRes() {
+	var tempForm = document.form1;
+	var dateList = document.getElementById("myDates");
+	var timeList = document.getElementById("myTimes");
+	var duration = tempForm.duration.value;
+	var date = dateList.options[dateList.selectedIndex].text;
+	var time = timeList.options[timeList.selectedIndex].text;
+
+	localStorage.setItem("resdate", date);
+	localStorage.setItem("restime", time);
+	localStorage.setItem("resduration", duration);
+}
+
+function required() {
+    var myForm = document.form1;
+    var duration = myForm.duration.value;
+
+		if(duration == "" || isNaN(duration) == true) {
+        showAlert("* required fields" + "<br />" + "Must be a number");
+        myForm.duration.focus();
+    } else if(isNaN(duration) == false && duration < 30) {
+        showAlert("Minimum time of 30 minutes.");
+        myForm.duration.focus();
+    } else {
+        /*Final check for eligibility before being verified*/
+        confirmation();
+    }
+}
+
+function confirmation() {
+
+    if(confirm("Time Verified\nAre you sure you want to continue?") == true) {
+        showAlert("Date & Time Selected");
+				saveRes();
+        /*Send final info to backend, commented out for now*/
+        //sendToBackend();
+        /*Local verify page location goes here*/
+        window.location.href = "respayment.html";
+    } else {
+        showAlert("Canceled");
+    }
+
+}
+
+/*A method where verified information can be sent to backend*/
+function sendToBackend() {
+   /*This is the final verified information (some may be blank) to be put
+    in what ever format is need to be sent to backend*/
+    var randCodeSTB = localStorage.getItem("randcode");
+    var phoneNumSTB = localStorage.getItem("phonenum")
+
+}
+
+/*Used to dosplay alert massages*/
+function showAlert(a) {
+    var alertTextSA = a;
+    document.getElementById("alertText").innerHTML = alertTextSA;
+}
+
+function isLogin() {
+    var loginPS = localStorage.getItem("login");
+
+    if(loginPS == "true") {
+        window.location.href = "uparkingstatus.html";
+    } else {
+        window.location.href = "parkingstatus.html";
+    }
+}
+
+function isLoginH() {
+    var loginPS = localStorage.getItem("login");
+
+    if(loginPS == "true") {
+        window.location.href = "userhome.html";
+    } else {
+        window.location.href = "home.html";
+    }
+}
+
+function isLoginCO() {
+    var loginPS = localStorage.getItem("login");
+
+    if(loginPS == "true") {
+        window.location.href = "ucheckout.html";
+    } else {
+        window.location.href = "checkout.html";
+    }
+}
+
+
+</script>
+</head>
+
+
+
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 30%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #db3b43;
+  color: white;
+  padding: 14px 20px;
+  margin: 4px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+
+button:hover {
+  opacity:1;
+}
+
+
+
+/* Float cancel and signup buttons and add an equal width */
+.continuebtn {
+  text-align:center;
+  width: 30%;
+}
+
+
+/* Add padding to container elements */
+.container {
+  padding: 16px;
+}
+
+/* Clear floats */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Change styles for cancel button and signup button on extra small screens */
+@media screen and (max-width: 300px) {
+  .cancelbtn, .signupbtn {
+     width: 100%;
+  }
+}
+</style>
+
+
+<body onload="showDates()">
+<center> <h2> SmartAPS </h2>
+
+<link rel="stylesheet" href="stylesheet.css">
+
+<div class="menubar">
+    <a href="#" onclick="isLoginH()">Home</a>
+    <a href="checkin.html">Check-in</a>
+    <a href="#" onclick="isLogin()">Parking Status</a>
+    <a class="active">Make a Reservation</a>
+		<a href="#" onclick="isLoginCO()">Check-Out</a>
+</div>
+
+
+<form NAME=form1 action="/action_page.php" style="border:1px solid #ccc">
+  <div class="container">
+    <h1>Making a Reservation</h1>
+    <p id="alertText">This is your parking code.</p>
+    <p id="verifyText"></p>
+    <hr>
+
+    <p id="code"></p>
+
+    <select id="myDates" onChange="showTimes()">
+			<option value="test0" id="picker">Pick A Date</option>
+      <option value="test1" id="date1">Test 1</option>
+      <option value="test2" id="date2">Test 2</option>
+      <option value="test3" id="date3">Test 3</option>
+      <option value="test4" id="date4">Test 4</option>
+      <option value="test5" id="date5">Test 4</option>
+      <option value="test6" id="date6">Test 4</option>
+      <option value="test7" id="date7">Test 4</option>
+      <option value="test8" id="date8">Test 4</option>
+      <option value="test9" id="date9">Test 4</option>
+      <option value="test10" id="date10">Test 4</option>
+      <option value="test11" id="date11">Test 4</option>
+      <option value="test12" id="date12">Test 4</option>
+      <option value="test13" id="date13">Test 4</option>
+      <option value="test14" id="date14">Test 4</option>
+    </select>
+
+		<p><br><p>
+
+		<select id="myTimes" onChange="showDuration()">
+			<option value="test0">Pick A Time</option>
+      <option value="test1">9:00 AM</option>
+      <option value="test2">10:00 AM</option>
+      <option value="test3">11:00 AM</option>
+      <option value="test4">12:00 PM</option>
+      <option value="test4">1:00 PM</option>
+			<option value="test4">2:00 PM</option>
+      <option value="test4">3:00 PM</option>
+      <option value="test4">4:00 PM</option>
+      <option value="test4">5:00 PM</option>
+      <option value="test4">6:00 PM</option>
+      <option value="test4">7:00 PM</option>
+      <option value="test4">8:00 PM</option>
+      <option value="test4">9:00 PM</option>
+    </select>
+
+		<p><br><p>
+
+		<div id="duration">
+			<label for="duration"><b>Duration *</b></label><br>
+    	<input type="text" placeholder="ex. For 60 minutes, enter 60" name="duration" ><br>
+		</div>
+
+    <p>Click the button below to check your car out.</p>
+    <p></p>
+
+  	<div class="clearfix">
+    	<button type="button" class="continuebtn" onclick="required()">Make Reservation</button>
+    </div>
+
+  </div>
+</form>
+
+</body>
+</html>
